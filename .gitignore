@@ -1,1 +1,50 @@
-node_modules
+# Node modules
+dist/
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.test
+
+# IDE/Editor settings
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# npm cache
+tmp/
+
+# Build output
+/build
+
+# Dependencies
+package-lock.json
+yarn.lock
+
+# Others
+*.bak
+*.swp
+*.swo
+
+# Vercel/Deployment Files
+.vercel/
+
+# Ignore local testing files
+test-output/
+coverage/
+
+# Misc
+*.log
+*.out
+*.pid
+
