@@ -1,9 +1,8 @@
 const express = require('express');
+const { handleSignUp } = require('../controller/signUpController');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.json({ message: 'This is Sign up Router' });
-});
+router.get('/', handleSignUp);
 
 module.exports = router;
