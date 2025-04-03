@@ -6,7 +6,9 @@ const handleSignUp = async (req, res) => {
     try {
         const { name, email, mobile, password } = req.body;
 
-        existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
+        const existingUser = await User.findOne({
+            $or: [{ email }, { mobile }],
+        });
 
         if (existingUser) {
             return res.status(400).json({
@@ -33,7 +35,7 @@ const handleSignUp = async (req, res) => {
                 id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
-                mobile: newUser.email,
+                mobile: newUser.mobile,
                 role: newUser.role,
             },
             process.env.JWT_SECRET,
@@ -43,8 +45,9 @@ const handleSignUp = async (req, res) => {
         );
 
         // set cookie
-        res.cookie(process.env.COOKIE_NAME, token, {
-            maxAge: process.env.JWT_EXPIRY,
+        const cookieName = process.env.COOKIE_NAME || 'token';
+        res.cookie(cookieName, token, {
+            maxAge: parseInt(process.env.JWT_EXPIRY, 10) * 1000,
             httpOnly: true,
             signed: true,
         });
