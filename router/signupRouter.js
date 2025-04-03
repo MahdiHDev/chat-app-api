@@ -3,6 +3,6 @@ const { handleSignUp } = require('../controller/signUpController');
 
 const router = express.Router();
 
-router.get('/', handleSignUp);
+router.post('/', handleSignUp);
 
 module.exports = router;

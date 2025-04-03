@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000;
 // internal imports
 const loginRouter = require('./router/loginRouter');
 const signupRouter = require('./router/signupRouter');
+const cookieParser = require('cookie-parser');
 
 // database connection
 mongoose
@@ -14,8 +15,11 @@ mongoose
     .then(() => console.log('database connection successful'))
     .catch((err) => console.log(err));
 
-// Middleware
+// request parser
 app.use(express.json());
+
+// parse cookies
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Routes
 
