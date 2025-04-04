@@ -5,8 +5,7 @@ require('dotenv').config();
 const port = process.env.PORT || 3000;
 
 // internal imports
-const loginRouter = require('./router/loginRouter');
-const signupRouter = require('./router/signupRouter');
+const authRouter = require('./router/authRouter');
 const cookieParser = require('cookie-parser');
 
 // database connection
@@ -26,8 +25,11 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to chat app' });
 });
-app.use('/login', loginRouter);
-app.use('/signup', signupRouter);
+app.use('/auth', authRouter);
+// 404 page
+app.get('*', (req, res) => {
+    res.json({ message: 'No Routes Found' });
+});
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);

@@ -47,7 +47,7 @@ const handleSignUp = async (req, res) => {
         // set cookie
         const cookieName = process.env.COOKIE_NAME || 'token';
         res.cookie(cookieName, token, {
-            maxAge: parseInt(process.env.JWT_EXPIRY, 10) * 1000,
+            maxAge: process.env.JWT_EXPIRY,
             httpOnly: true,
             signed: true,
         });
