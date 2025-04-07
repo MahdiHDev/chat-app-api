@@ -29,7 +29,7 @@ const handleLogin = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).json({
+            return res.status(500).json({
                 message: 'user not found',
             });
         }
@@ -59,9 +59,12 @@ const handleLogin = async (req, res) => {
         const cookieName = process.env.COOKIE_NAME || 'token';
         res.cookie(cookieName, newToken, {
             maxAge: process.env.JWT_EXPIRY,
-            httpOnly: true,
+            // httpOnly: true,
             signed: true,
+            secure: false,
         });
+
+        console.log(cookieName);
 
         // send response
         res.status(200).json({

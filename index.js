@@ -1,12 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const cors = require('cors');
 require('dotenv').config();
+
 const port = process.env.PORT || 3000;
 
 // internal imports
 const authRouter = require('./router/authRouter');
+const userrouter = require('./router/userRouter');
 const cookieParser = require('cookie-parser');
+
+// Allow requests from frontend
+app.use(
+    cors({
+        origin: 'http://localhost:5173', // or use '*' to allow all origins (not recommended for production)
+        credentials: true, // if you are sending cookies or auth headers
+    })
+);
 
 // database connection
 mongoose
@@ -26,10 +37,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Welcome to chat app' });
 });
 app.use('/auth', authRouter);
-// 404 page
-app.get('*', (req, res) => {
-    res.json({ message: 'No Routes Found' });
-});
+app.use('/user', userrouter);
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
