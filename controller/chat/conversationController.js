@@ -1,18 +1,34 @@
-const Conversation = require('../../models/conversation');
+const Conversation = require("../../models/conversation");
 
-const createConversation = async (req, res) => {
+const createConversation = (io) => async (req, res) => {
     try {
         const { creator, participant } = req.body;
 
+        // check if conversation already exist
+        let existingConversation = await Conversation.findOne({
+            $or: [
+                { creator, participant },
+                { creator: participant, participant: creator },
+            ],
+        });
+
+        if (existingConversation) {
+            return res.status(200).json(existingConversation);
+        }
+
+        // if not, create a new conversation
         const conversation = await Conversation.create({
             creator,
             participant,
         });
 
+        io.emit("new_conversation", conversation);
+        // io.emit("conversation:new", conversation); // notify all clients
+
         res.status(201).json(conversation);
     } catch (error) {
         res.status(500).json({
-            error: 'Failed to create conversation',
+            error: "Failed to create conversation",
             details: error.message,
         });
     }
@@ -24,13 +40,16 @@ const getUserConversations = async (req, res) => {
         console.log(userId);
 
         const conversations = await Conversation.find({
-            $or: [{ 'creator.id': userId }, { 'participant.id': userId }],
-        }).sort({ updatedAt: -1 });
+            $or: [{ creator: userId }, { participant: userId }],
+        })
+            .sort({ updatedAt: -1 })
+            .populate("creator", "name avatar")
+            .populate("participant", "name avatar");
 
         res.json(conversations);
     } catch (error) {
         res.status(500).json({
-            error: 'Failed to fetch conversations',
+            error: "Failed to fetch conversations",
             details: error.message,
         });
     }
@@ -40,24 +59,23 @@ const getUserConversations = async (req, res) => {
 const getConversattionById = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id);
 
         const conversation = await Conversation.findById(id);
         if (!conversation) {
-            return res.status(404).json({ error: 'Conversation not found' });
+            return res.status(404).json({ error: "Conversation not found" });
         }
 
         res.json(conversation);
     } catch (error) {
         res.status(500).json({
-            error: 'Failed to get conversation',
+            error: "Failed to get conversation",
             details: error.message,
         });
     }
 };
 
 // Update conversation last_updated (e.g. on message sent)
-const updateConversationTimestamp = async (req, res) => {
+const updateConversationTimestamp = (io) => async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -70,32 +88,36 @@ const updateConversationTimestamp = async (req, res) => {
         );
 
         if (!conversation) {
-            return res.status(404).json({ error: 'Conversation not found' });
+            return res.status(404).json({ error: "Conversation not found" });
         }
+
+        io.emit("conversation:update", conversation);
 
         res.json(conversation);
     } catch (error) {
         res.status(500).json({
-            error: 'Failed to update conversation',
+            error: "Failed to update conversation",
             details: error.message,
         });
     }
 };
 
-const deleteconversation = async (req, res) => {
+const deleteconversation = (io) => async (req, res) => {
     try {
         const { id } = req.params;
 
         const result = await Conversation.findByIdAndDelete(id);
 
         if (!result) {
-            return res.status(404).json({ error: 'Conversation not found' });
+            return res.status(404).json({ error: "Conversation not found" });
         }
 
-        res.json({ message: 'Conversation deleted successfully' });
+        io.emit("conversation:delete", { id });
+
+        res.json({ message: "Conversation deleted successfully" });
     } catch (error) {
         res.status(500).json({
-            error: 'Failed to delete conversation',
+            error: "Failed to delete conversation",
             details: error.message,
         });
     }

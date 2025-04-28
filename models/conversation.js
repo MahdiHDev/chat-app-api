@@ -1,17 +1,17 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const conversationSchema = mongoose.Schema(
     {
         creator: {
-            id: mongoose.Types.ObjectId,
-            name: String,
-            avatar: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
 
         participant: {
-            id: mongoose.Types.ObjectId,
-            name: String,
-            avatar: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
         last_updated: {
             type: Date,
@@ -23,6 +23,6 @@ const conversationSchema = mongoose.Schema(
     }
 );
 
-const Conversation = mongoose.model('Conversation', conversationSchema);
+const Conversation = mongoose.model("Conversation", conversationSchema);
 
 module.exports = Conversation;

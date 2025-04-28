@@ -1,17 +1,23 @@
-const {
-    createConversation,
-    getUserConversations,
-    getConversattionById,
-    updateConversationTimestamp,
-    deleteconversation,
-} = require('../controller/chat/conversationController');
+const express = require("express");
 
-const router = require('express').Router();
+const chatRouter = (io) => {
+    const {
+        createConversation,
+        getUserConversations,
+        getConversattionById,
+        updateConversationTimestamp,
+        deleteconversation,
+    } = require("../controller/chat/conversationController");
 
-router.post('/converstion', createConversation);
-router.get('/converstion', getUserConversations);
-router.get('/singleconverstion/:id', getConversattionById);
-router.put('/updateconversation/:id', updateConversationTimestamp);
-router.delete('/deleteconversation/:id', deleteconversation);
+    const router = express.Router();
 
-module.exports = router;
+    router.post("/conversation", createConversation(io));
+    router.get("/conversation", getUserConversations);
+    router.get("/singleconversation/:id", getConversattionById);
+    router.put("/updateconversation/:id", updateConversationTimestamp);
+    router.delete("/deleteconversation/:id", deleteconversation);
+
+    return router;
+};
+
+module.exports = chatRouter;
