@@ -10,7 +10,9 @@ const createConversation = (io) => async (req, res) => {
                 { creator, participant },
                 { creator: participant, participant: creator },
             ],
-        });
+        }).populate("creator participant", "name avatar last_updated");
+
+        console.log("existing", existingConversation);
 
         if (existingConversation) {
             return res.status(200).json(existingConversation);
@@ -22,10 +24,14 @@ const createConversation = (io) => async (req, res) => {
             participant,
         });
 
-        io.emit("new_conversation", conversation);
+        const populatedConversation = await Conversation.findById(
+            conversation._id
+        ).populate("creator participant", "name avatar last_updated");
+
+        io.emit("new_conversation", populatedConversation);
         // io.emit("conversation:new", conversation); // notify all clients
 
-        res.status(201).json(conversation);
+        res.status(201).json(populatedConversation);
     } catch (error) {
         res.status(500).json({
             error: "Failed to create conversation",

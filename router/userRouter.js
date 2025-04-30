@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 
-const { searchuser } = require('../controller/userController');
-const isLoggedIn = require('../middlewares/isLoggedIn');
+const { searchuser } = require("../controller/userController");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
 const router = express.Router();
 
-router.get('/searchUser', searchuser);
+router.get("/searchUser", isLoggedIn, searchuser);
 
 module.exports = router;
