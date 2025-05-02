@@ -16,8 +16,10 @@ const port = process.env.PORT || 3000;
 // internal imports
 const authRouter = require("./router/authRouter");
 const userrouter = require("./router/userRouter");
+const messageRouter = require("./router/messageRouter");
 const chatRouter = require("./router/chatRouter");
 const cookieParser = require("cookie-parser");
+const isLoggedIn = require("./middlewares/isLoggedIn");
 
 // Allow requests from frontend
 app.use(
@@ -46,7 +48,8 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", authRouter);
 app.use("/user", userrouter);
-app.use("/chat", chatRouter(io));
+app.use("/chat", chatRouter(io)); // this is conversation route
+app.use("/message", messageRouter);
 
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
