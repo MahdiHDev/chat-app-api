@@ -18,12 +18,16 @@ const sendMessage = async (req, res) => {
             message,
         });
 
+        const populatedMessage = await Message.findById(
+            newMessage._id
+        ).populate("sender", "name email avatar");
+
         // Update last_updated field in conversation
         await Conversation.findByIdAndUpdate(conversationId, {
             last_updated: Date.now(),
         });
 
-        res.status(201).json(newMessage);
+        res.status(201).json(populatedMessage);
     } catch (error) {
         res.status(500).json({ message: "Error sending message", error });
     }
@@ -36,7 +40,7 @@ const getMessageByConversation = async (req, res) => {
 
         const messages = await Message.find({ conversationId }).populate(
             "sender",
-            "name avatar"
+            "name email avatar"
         );
 
         res.status(200).json(messages);
@@ -64,8 +68,28 @@ const markMessagesAsRead = async (req, res) => {
     }
 };
 
+const deleteMessage = async (req, res) => {
+    try {
+        const { messageId } = req.params;
+
+        const deletedMessage = await Message.findByIdAndDelete(messageId);
+
+        if (!deletedMessage) {
+            return res.status(404).json({ message: "Message not found" });
+        }
+
+        res.status(200).json({ message: "Message deleted successfully" });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to delete message",
+            error,
+        });
+    }
+};
+
 module.exports = {
     sendMessage,
     getMessageByConversation,
     markMessagesAsRead,
+    deleteMessage,
 };

@@ -39,4 +39,4 @@ const searchUserById = async (req, res) => {
     }
 };
 
-module.exports = { searchuser };
+module.exports = { searchuser, searchUserById };
