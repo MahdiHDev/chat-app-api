@@ -50,6 +50,9 @@ app.use("/auth", authRouter);
 app.use("/user", userrouter);
 app.use("/chat", chatRouter(io)); // this is conversation route
 app.use("/message", messageRouter);
+app.post("/api/test", (req, res) => {
+    res.json({ message: "Working!" });
+});
 
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
